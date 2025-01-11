@@ -1,0 +1,20 @@
+# Backend
+/backend/node_modules/
+/backend/.env
+/backend/logs
+/backend/*.log
+
+# Frontend
+/frontend/node_modules/
+/frontend/dist/
+/frontend/.env
+/frontend/.vite
+
+# Common
+.DS_Store
+Thumbs.db
+
+# Root node_modules
+/node_modules/
+.env
+logs
