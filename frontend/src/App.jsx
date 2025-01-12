@@ -1,14 +1,19 @@
 import { useState } from "react";
 import "./App.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import SignUp from "./pages/SignUp";
+import SignIn from "./pages/SignIn";
+
+
 
 function App() {
 	return (
-		<div>
-			<p className="font-bold text-3xl text-red-400">hello welcome to the website.how are you ?
-      hello welcome to the website.how are you ?
-      hello welcome to the website.how are you ?
-      </p>
-		</div>
+		<Router>
+			<Routes>
+				<Route path="/signup" element={<SignUp />} />
+				<Route path="/signin" element={<SignIn />} />
+			</Routes>
+		</Router>
 	);
 }
 
