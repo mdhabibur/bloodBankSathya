@@ -1,20 +1,25 @@
 import { Button, Form, Input, Radio } from "antd";
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
 	emailValidationRule,
 	requiredFieldRule,
 	urlValidationRule,
 } from "../../../utils/formValidationRule";
-import {useDispatch, useSelector} from 'react-redux'
+import { useDispatch, useSelector } from "react-redux";
 import { signUpUser } from "../../redux/auth/authApi";
+import { resetAuthState } from "../../redux/auth/authSlice";
+import toast from "react-hot-toast";
+import { Loader } from "lucide-react";
+
+
 
 const SignUp = () => {
 	const [userType, setUserType] = useState("donor");
-  const dispatch = useDispatch();
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
-  const { loading, error, success } = useSelector((state) => state.auth);
-
+	const { loading, error, success } = useSelector((state) => state.auth);
 
 	const handleUserTypeChange = (e) => {
 		setUserType(e.target.value);
@@ -23,20 +28,51 @@ const SignUp = () => {
 	const onFinish = (formData) => {
 		console.log("Form Values:", formData);
 
-    dispatch(signUpUser({
-      url: "/api/auth/signup",
-      formData,
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-
-    }))
-
+		try {
+			dispatch(
+				signUpUser({
+					url: "/api/auth/signup",
+					formData,
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+				})
+			);
+		} catch (error) {
+			console.log("frontend Error: ", error);
+		}
 	};
+
+	useEffect(() => {
+		//timer object
+		let timer;
+		if (error || success) {
+
+			if (success) {
+				dispatch(resetAuthState());
+				navigate("/signin");
+				toast.success(success);
+				return;
+			}
+
+			timer = setTimeout(() => {
+				dispatch(resetAuthState());
+			}, 3000);
+
+		}
+
+		//cleanup timer on unmount
+		return () => clearTimeout(timer);
+	}, [error, success, dispatch, navigate]);
 
 	return (
 		<div className="flex justify-center items-center min-h-screen bg-gray-100">
 			<div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md my-4">
 				<h1 className="text-2xl font-bold text-center mb-4">Sign Up</h1>
+
+
+        {error && toast.error(error)}
+
+
 				<Form
 					layout="vertical"
 					onFinish={onFinish}
@@ -126,8 +162,13 @@ const SignUp = () => {
 							type="primary"
 							htmlType="submit"
 							className="w-full uppercase"
+              disabled={loading}
 						>
-							Sign Up
+							{
+                loading ? (
+                  <Loader className="animate-spin mx-auto" size={24}/>
+                ) : "Sign Up"
+              }
 						</Button>
 					</Form.Item>
 				</Form>
