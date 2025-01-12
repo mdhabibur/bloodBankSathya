@@ -2,6 +2,8 @@ import bcrypt from "bcryptjs";
 import User from "../models/User.js";
 import crypto from "crypto";
 import { sendUserVerificationEmail } from "../mailtrap/sendMails.js";
+import jwt from "jsonwebtoken";
+import { generateJWTandSetCookie } from "../utils/generateJWTandSetCookie.js";
 
 // User sign-up controller
 export const signUpUser = async (req, res) => {
@@ -103,6 +105,52 @@ export const verifyUserEmail = async (req, res) => {
 		});
 	} catch (error) {
 		console.error("Error in verifyUserEmail:", error);
-		res.status(500).json({ success: false, message: "Server error  in verifying user email" });
+		res.status(500).json({
+			success: false,
+			message: "Server error  in verifying user email",
+		});
+	}
+};
+
+export const signInUser = async (req, res) => {
+	const { email, password, userType } = req.body;
+
+	try {
+		// Validate input
+		if (!email || !password || !userType) {
+			return res
+				.status(400)
+				.json({ success: false, message: "All fields are required" });
+		}
+
+		// Check if user exists
+		const user = await User.findOne({ email, userType });
+		if (!user) {
+			return res
+				.status(404)
+				.json({ success: false, message: "Email Or User type Error" });
+		}
+
+		// Compare passwords
+		const isPasswordValid = await bcrypt.compare(password, user.password);
+		if (!isPasswordValid) {
+			return res
+				.status(401)
+				.json({ success: false, message: "Invalid password" });
+		}
+
+		// Generate JWT token
+		await generateJWTandSetCookie(user, res);
+
+		res.status(200).json({
+			success: true,
+			message: "Sign in successful",
+			data: { user: { email: user.email, userType: user.userType } },
+		});
+	} catch (error) {
+		console.error("Error in signInUser:", error);
+		res
+			.status(500)
+			.json({ success: false, message: "Server error signInUser" });
 	}
 };

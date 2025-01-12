@@ -5,17 +5,17 @@ import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import { Toaster } from "react-hot-toast";
 import VerifyEmail from "./pages/VerifyEmail";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
 	return (
 		<div>
 			<Router>
 				<Routes>
-
+					<Route path="/" element={<Dashboard />} />
 					<Route path="/signup" element={<SignUp />} />
 					<Route path="/signin" element={<SignIn />} />
-          <Route path="/verify-email" element={<VerifyEmail />} />
-
+					<Route path="/verify-email" element={<VerifyEmail />} />
 				</Routes>
 			</Router>
 
