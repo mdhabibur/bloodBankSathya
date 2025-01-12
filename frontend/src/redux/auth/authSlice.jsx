@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { signUpUser } from "./authApi";
+import { signUpUser, verifyEmail } from "./authApi";
 
 // Initial state for auth slice
 const initialState = {
@@ -27,14 +27,34 @@ const authSlice = createSlice({
       .addCase(signUpUser.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        state.currentUser = action.payload.user;
+        state.currentUser = action.payload.data.user;
         state.success = action.payload.message;
       })
       .addCase(signUpUser.rejected, (state, action) => {
         state.loading = false;
         state.success = null;
         state.error = action.payload;
-      });
+      })
+
+
+
+      .addCase(verifyEmail.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(verifyEmail.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.success = action.payload.message;
+      })
+      .addCase(verifyEmail.rejected, (state, action) => {
+        state.loading = false;
+        state.success = null;
+        state.error = action.payload;
+      })
+
+
+
   },
 });
 

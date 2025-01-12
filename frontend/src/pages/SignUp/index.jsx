@@ -49,7 +49,7 @@ const SignUp = () => {
 
 			if (success) {
 				dispatch(resetAuthState());
-				navigate("/signin");
+				navigate("/verify-email");
 				toast.success(success);
 				return;
 			}
