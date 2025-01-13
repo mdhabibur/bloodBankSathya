@@ -62,11 +62,12 @@ const SignIn = () => {
 	}, [error, success, dispatch, navigate]);
 
 	return (
-		<div className="flex justify-center items-center min-h-screen bg-gray-100">
+		<div className="flex justify-center items-center min-h-screen">
 			<div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md my-4">
 				<h1 className="text-2xl font-bold text-center mb-4">Sign In</h1>
 
 				{error && toast.error(error)}
+				{console.log("error: ", error)}
 
 				<Form
 					layout="vertical"

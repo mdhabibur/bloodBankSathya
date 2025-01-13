@@ -9,49 +9,59 @@ import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./routesProtection/PrivateRoute";
 import PublicRoute from "./routesProtection/PublicRoute";
 import EmailVerifiedRoute from "./routesProtection/EmailVerifiedRoute";
+import { ConfigProvider } from "antd";
+import theme from "./theme/theme.js";
 
 function App() {
 	return (
-		<div>
-			<Router>
-				<Routes>
-					<Route
-						path="/"
-						element={
-							<PrivateRoute>
-								<Dashboard />
-							</PrivateRoute>
-						}
-					/>
-					<Route
-						path="/signup"
-						element={
-							<PublicRoute>
-								<SignUp />
-							</PublicRoute>
-						}
-					/>
-					<Route
-						path="/signin"
-						element={
-							<PublicRoute>
-								<SignIn />
-							</PublicRoute>
-						}
-					/>
-					<Route
-						path="/verify-email"
-						element={
-							<PublicRoute>
-								<VerifyEmail />
-							</PublicRoute>
-						}
-					/>
-				</Routes>
-			</Router>
+		<ConfigProvider
+			theme={{
+				token: {
+					colorPrimary: theme.primaryColor,
+				},
+			}}
+		>
+			<div className="bg-primary">
+				<Router>
+					<Routes>
+						<Route
+							path="/"
+							element={
+								<PrivateRoute>
+									<Dashboard />
+								</PrivateRoute>
+							}
+						/>
+						<Route
+							path="/signup"
+							element={
+								<PublicRoute>
+									<SignUp />
+								</PublicRoute>
+							}
+						/>
+						<Route
+							path="/signin"
+							element={
+								<PublicRoute>
+									<SignIn />
+								</PublicRoute>
+							}
+						/>
+						<Route
+							path="/verify-email"
+							element={
+								<PublicRoute>
+									<VerifyEmail />
+								</PublicRoute>
+							}
+						/>
+					</Routes>
+				</Router>
 
-			<Toaster />
-		</div>
+				<Toaster />
+			</div>
+		</ConfigProvider>
 	);
 }
 
