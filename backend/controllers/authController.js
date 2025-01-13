@@ -4,9 +4,10 @@ import crypto from "crypto";
 import { sendUserVerificationEmail } from "../mailtrap/sendMails.js";
 import jwt from "jsonwebtoken";
 import { generateJWTandSetCookie } from "../utils/generateJWTandSetCookie.js";
+import CustomError from "../utils/CustomError.js";
 
 // User sign-up controller
-export const signUpUser = async (req, res) => {
+export const signUpUser = async (req, res, next) => {
 	const {
 		username,
 		email,
@@ -22,9 +23,7 @@ export const signUpUser = async (req, res) => {
 		// Check if the email is already in use
 		const existingUser = await User.findOne({ email });
 		if (existingUser) {
-			return res
-				.status(400)
-				.json({ success: false, message: "Email already exists" });
+			throw new CustomError(400, false, "Email already exists");
 		}
 
 		// Hash the password
@@ -68,11 +67,11 @@ export const signUpUser = async (req, res) => {
 		});
 	} catch (error) {
 		console.error("Error in signUpUser:", error);
-		res.status(500).json({ success: false, message: "Server error" });
+		next(error);
 	}
 };
 
-export const verifyUserEmail = async (req, res) => {
+export const verifyUserEmail = async (req, res, next) => {
 	const { code } = req.body;
 
 	try {
@@ -82,10 +81,7 @@ export const verifyUserEmail = async (req, res) => {
 		});
 
 		if (!user) {
-			return res.status(401).json({
-				success: false,
-				message: "Invalid or expired verification code",
-			});
+			throw new CustomError(401, false, "Invalid or expired verification code ");
 		}
 
 		user.isEmailVerified = true;
@@ -101,39 +97,30 @@ export const verifyUserEmail = async (req, res) => {
 		});
 	} catch (error) {
 		console.error("Error in verifyUserEmail:", error);
-		res.status(500).json({
-			success: false,
-			message: "Server error  in verifying user email",
-		});
+		next(error);
 	}
 };
 
-export const signInUser = async (req, res) => {
+export const signInUser = async (req, res, next) => {
 	const { email, password, userType } = req.body;
 
 	try {
 		// Validate input
 		if (!email || !password || !userType) {
-			return res
-				.status(400)
-				.json({ success: false, message: "All fields are required" });
+			throw new CustomError(400, false, "All fields are required");
 		}
 
 		// Check if user exists
 		const user = await User.findOne({ email, userType });
 
 		if (!user) {
-			return res
-				.status(404)
-				.json({ success: false, message: "Email Or User type does not match" });
+			throw new CustomError(404, false, "Email or user type does not match");
 		}
 
 		// Compare passwords
 		const isPasswordValid = await bcrypt.compare(password, user.password);
 		if (!isPasswordValid) {
-			return res
-				.status(401)
-				.json({ success: false, message: "Invalid password" });
+			throw new CustomError(401, false, "Invalid password");
 		}
 
 		//remove password field in response
@@ -149,13 +136,11 @@ export const signInUser = async (req, res) => {
 		});
 	} catch (error) {
 		console.error("Error in signInUser:", error);
-		res
-			.status(500)
-			.json({ success: false, message: "Server error signInUser" });
+		next(error);
 	}
 };
 
-export const logoutUser = async (req, res) => {
+export const logoutUser = async (req, res, next) => {
 	try {
 		// Clear the JWT cookie
 		res.clearCookie("token", {
@@ -170,9 +155,6 @@ export const logoutUser = async (req, res) => {
 		});
 	} catch (error) {
 		console.error("Error in logoutUser:", error);
-		res.status(500).json({
-			success: false,
-			message: "Server error during logout",
-		});
+		next(error);
 	}
 };

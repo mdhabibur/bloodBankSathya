@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { connectMongoDB } from "./mongoDB/connectMongoDB.js";
 import authRoutes from "./routes/authRoutes.js";
+import errorHandler from "./middlewares/errorHandler.js";
 
 dotenv.config();
 const app = express();
@@ -20,6 +21,10 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+
+
+//Error Handling middleware
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, async () => {
