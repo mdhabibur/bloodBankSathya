@@ -125,10 +125,11 @@ export const signInUser = async (req, res) => {
 
 		// Check if user exists
 		const user = await User.findOne({ email, userType });
+
 		if (!user) {
 			return res
 				.status(404)
-				.json({ success: false, message: "Email Or User type Error" });
+				.json({ success: false, message: "Email Or User type does not match" });
 		}
 
 		// Compare passwords
@@ -139,13 +140,16 @@ export const signInUser = async (req, res) => {
 				.json({ success: false, message: "Invalid password" });
 		}
 
+		//remove password field in response
+		user.password = undefined
+
 		// Generate JWT token
 		await generateJWTandSetCookie(user, res);
 
 		res.status(200).json({
 			success: true,
 			message: "Sign in successful",
-			data: { user: { email: user.email, userType: user.userType } },
+			data: { user },
 		});
 	} catch (error) {
 		console.error("Error in signInUser:", error);
