@@ -85,3 +85,32 @@ export const signInUser = createAsyncThunk(
 		}
 	}
 );
+
+
+export const logOutUser = createAsyncThunk(
+	"auth/logOutUser",
+	async (credentials, { rejectWithValue }) => {
+		try {
+			const response = await fetch(credentials.url, {
+				method: credentials.method,
+				credentials: "include",
+			});
+
+			const data = await response.json();
+
+			console.log("data: ", data);
+
+			if (data.success === false) {
+				return rejectWithValue(data?.message || "Sign In failed");
+			}
+
+			return data;
+		} catch (error) {
+			console.log("error: ", error);
+			return rejectWithValue(
+				"An error occurred during Sign In in FE"
+			);
+		}
+	}
+);
+

@@ -7,7 +7,7 @@ const EmailVerifiedRoute = ({ children }) => {
 
 	let componentToRender;
 
-	if (currentUser && !currentUser.isVerified) {
+	if (!currentUser.isEmailVerified) {
 		componentToRender = children;
 	} else {
 		componentToRender = <Navigate to="/signin" />;

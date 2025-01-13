@@ -42,9 +42,9 @@ function App() {
 					<Route
 						path="/verify-email"
 						element={
-							<EmailVerifiedRoute>
+							<PublicRoute>
 								<VerifyEmail />
-							</EmailVerifiedRoute>
+							</PublicRoute>
 						}
 					/>
 				</Routes>

@@ -62,14 +62,9 @@ export const signUpUser = async (req, res) => {
 		res.status(201).json({
 			success: true,
 			message: "User registered successfully",
-			data: {
-				user: {
-					id: newUser._id,
-					username: newUser.username,
-					email: newUser.email,
-					userType: newUser.userType,
-				},
-			},
+			// data: {
+			// 	user: {...newUser._doc,password: undefined},
+			// },
 		});
 	} catch (error) {
 		console.error("Error in signUpUser:", error);
@@ -102,6 +97,7 @@ export const verifyUserEmail = async (req, res) => {
 		res.status(200).json({
 			success: true,
 			message: "Email verified successfully",
+			// data: {user}
 		});
 	} catch (error) {
 		console.error("Error in verifyUserEmail:", error);
@@ -141,7 +137,7 @@ export const signInUser = async (req, res) => {
 		}
 
 		//remove password field in response
-		user.password = undefined
+		user.password = undefined;
 
 		// Generate JWT token
 		await generateJWTandSetCookie(user, res);
@@ -156,5 +152,27 @@ export const signInUser = async (req, res) => {
 		res
 			.status(500)
 			.json({ success: false, message: "Server error signInUser" });
+	}
+};
+
+export const logoutUser = async (req, res) => {
+	try {
+		// Clear the JWT cookie
+		res.clearCookie("token", {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production", // Use secure flag in production
+			sameSite: "strict", // Prevent cross-site cookie sharing
+		});
+
+		res.status(200).json({
+			success: true,
+			message: "Logout successful",
+		});
+	} catch (error) {
+		console.error("Error in logoutUser:", error);
+		res.status(500).json({
+			success: false,
+			message: "Server error during logout",
+		});
 	}
 };

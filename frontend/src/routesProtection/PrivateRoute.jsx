@@ -10,7 +10,7 @@ const PrivateRoute = ({ children }) => {
 	if (currentUser) {
 		componentToRender = children;
 	} else {
-		componentToRender = <Navigate to="/siginin" />;
+		componentToRender = <Navigate to="/signin" />;
 	}
 
 	return componentToRender;
