@@ -1,18 +1,20 @@
 import { Table } from "antd";
-import React from "react";
+import moment from "moment";
+import React, { useMemo } from "react";
 
-const InventoryTable = () => {
-	const columns = [
-		{ title: "Inventory Type", dataIndex: "inventoryType", key: "type" },
-		{ title: "Blood Group", dataIndex: "bloodGroup", key: "bloodGroup" },
-		{ title: "Quantity", dataIndex: "quantity", key: "quantity" },
-		{ title: "Reference", dataIndex: "reference", key: "reference" },
-		{ title: "Date", dataIndex: "date", key: "date" },
-	];
+const InventoryTable = ({ inventories, columns }) => {
+	if (!inventories) {
+		return <div>Fetching Inventories...</div>;
+	}
 
-	const data = [];
+    //add unique 'key' for each inventory item
 
-	return <Table columns={columns} dataSource={data} />;
+    const inventoriesWithKeys = inventories.map((item, index) => ({
+        ...item,
+        key: item._id || index
+    }))
+
+	return <Table columns={columns} dataSource={inventoriesWithKeys} />;
 };
 
 export default InventoryTable;

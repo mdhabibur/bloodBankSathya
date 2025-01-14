@@ -26,7 +26,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
-app.use("/api/inventory", inventoryRoutes);
+app.use("/api/inventories", inventoryRoutes);
 
 
 //Error Handling middleware

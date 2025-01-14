@@ -19,33 +19,40 @@ export const addInventory = async (req, res, next) => {
 	try {
 		// Validate fields
 		if (!inventoryType || !bloodGroup || !quantity || !organization) {
-
-        return res.status(400).json({success: false, message: "All fields are required." });
-
+			return res
+				.status(400)
+				.json({ success: false, message: "All fields are required." });
 		}
 
-        // console.log("donor: ", donor)
-        // console.log("hospital:", hospital)
-        // console.log("inventory type: ", inventoryType)
+		// console.log("donor: ", donor)
+		// console.log("hospital:", hospital)
+		// console.log("inventory type: ", inventoryType)
 
-        if (inventoryType === "In" && !donor) {
-            return res.status(400).json({success: false, message: "donor email is required." });
-        }
+		if (inventoryType === "In" && !donor) {
+			return res
+				.status(400)
+				.json({ success: false, message: "donor email is required." });
+		}
 
-        if (inventoryType === "Out" && !hospital) {
-            return res.status(400).json({success: false, message: "hospital email is required." });
-        }
+		if (inventoryType === "Out" && !hospital) {
+			return res
+				.status(400)
+				.json({ success: false, message: "hospital email is required." });
+		}
 
 		// Check if quantity is a positive number
 		if (quantity <= 0) {
-			return res
-				.status(400)
-				.json({success: false, message: "Quantity must be a positive value." });
+			return res.status(400).json({
+				success: false,
+				message: "Quantity must be a positive value.",
+			});
 		}
 
 		// Check inventoryType validity
 		if (!["In", "Out"].includes(inventoryType)) {
-			return res.status(400).json({success: false, message: "Invalid inventory type." });
+			return res
+				.status(400)
+				.json({ success: false, message: "Invalid inventory type." });
 		}
 
 		// Find user for hospital, donor, or organization reference
@@ -53,16 +60,18 @@ export const addInventory = async (req, res, next) => {
 		if (inventoryType === "In") {
 			donorOrHospitalUser = await User.findOne({ email: donor });
 			if (!donorOrHospitalUser) {
-				return res
-					.status(404)
-					.json({success: false, message: "donor with the given email not found." });
+				return res.status(404).json({
+					success: false,
+					message: "donor with the given email not found.",
+				});
 			}
 		} else if (inventoryType === "Out") {
 			donorOrHospitalUser = await User.findOne({ email: hospital });
 			if (!donorOrHospitalUser) {
-				return res
-					.status(404)
-					.json({success: false, message: "hospital with the given email not found." });
+				return res.status(404).json({
+					success: false,
+					message: "hospital with the given email not found.",
+				});
 			}
 		}
 
@@ -86,14 +95,33 @@ export const addInventory = async (req, res, next) => {
 		await newInventory.save();
 
 		res.status(201).json({
+			success: true,
 			message: "Inventory added successfully.",
 			data: {
 				inventory: newInventory,
-                donorOrHospitalUser
+				donorOrHospitalUser,
 			},
 		});
 	} catch (error) {
 		console.error("Error adding inventory:", error);
-		res.status(500).json({success: false, message: "Internal server error." });
+		res.status(500).json({ success: false, message: "Internal server error." });
+	}
+};
+
+export const getInventories = async (req, res, next) => {
+	try {
+		const inventories = await Inventory.find({ organization: req.user.userId }).populate("donor hospital organization");
+		// Fetch all inventories of logged in organization
+		res.status(200).json({
+			success: true,
+			message: "Inventory fetched successfully.",
+			data: {
+				inventories,
+			},
+		});
+	} catch (error) {
+		res
+			.status(500)
+			.json({ success: false, message: "Failed to fetch inventories" });
 	}
 };
