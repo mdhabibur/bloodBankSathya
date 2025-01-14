@@ -11,6 +11,7 @@ import PublicRoute from "./routesProtection/PublicRoute";
 import EmailVerifiedRoute from "./routesProtection/EmailVerifiedRoute";
 import { ConfigProvider } from "antd";
 import theme from "./theme/theme.js";
+import Profile from "./pages/Profile/index.jsx";
 
 function App() {
 	return (
@@ -54,6 +55,15 @@ function App() {
 								<PublicRoute>
 									<VerifyEmail />
 								</PublicRoute>
+							}
+						/>
+
+						<Route
+							path="/profile"
+							element={
+								<PrivateRoute>
+									<Profile />
+								</PrivateRoute>
 							}
 						/>
 					</Routes>

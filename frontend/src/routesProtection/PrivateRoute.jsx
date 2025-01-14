@@ -55,6 +55,11 @@ const PrivateRoute = ({ children }) => {
 		return <Navigate to="/signin" />;
 	}
 
+
+	const navigateToProfile = () => {
+		navigate("/profile")
+	}
+
 	return (
 		<div className="min-h-screen flex flex-col bg-primary">
 			{/* Header */}
@@ -69,7 +74,7 @@ const PrivateRoute = ({ children }) => {
 				{/* User Profile and Logout */}
 				<div className="flex items-center gap-4">
 					{/* User Profile */}
-					<div className="flex items-center gap-2">
+					<div className="flex items-center gap-2 cursor-pointer" onClick={navigateToProfile}>
 						<FaUserCircle className="text-xl" />
 						<span className="font-medium">{currentUser.username}</span>
 					</div>
