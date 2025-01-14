@@ -1,11 +1,12 @@
-import theme from "./src/theme/theme.js";
+import { tailwindCustomTheme } from "./src/theme/theme";
+
 
 export default {
 	content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
 	theme: {
 		extend: {
 			colors:{
-				primary: theme.primaryColor
+				primary: tailwindCustomTheme.colorPrimary
 			},
 			fontFamily: {
 				montserrat: ["Montserrat", "sans-serif"],
@@ -13,4 +14,5 @@ export default {
 		},
 	},
 	plugins: [],
+	important: true,
 };

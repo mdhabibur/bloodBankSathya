@@ -10,17 +10,13 @@ import PrivateRoute from "./routesProtection/PrivateRoute";
 import PublicRoute from "./routesProtection/PublicRoute";
 import EmailVerifiedRoute from "./routesProtection/EmailVerifiedRoute";
 import { ConfigProvider } from "antd";
-import theme from "./theme/theme.js";
 import Profile from "./pages/Profile/index.jsx";
+import {antdCustomTheme} from "./theme/theme.js";
 
 function App() {
 	return (
 		<ConfigProvider
-			theme={{
-				token: {
-					colorPrimary: theme.primaryColor,
-				},
-			}}
+			theme={antdCustomTheme}
 		>
 			<div className="bg-primary">
 				<Router>

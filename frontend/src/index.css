@@ -12,3 +12,16 @@
 body {
   @apply font-montserrat;
 }
+
+
+/* customize antd components using tailwind css classes  */
+
+.ant-btn {
+  @apply font-semibold; 
+  /* Semi-bold font and color green is applied from theme customization */
+}
+
+.custom-tabs .ant-tabs-tab {
+  @apply text-gray-700 text-base font-semibold;
+}
+

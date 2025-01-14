@@ -61,7 +61,7 @@ const PrivateRoute = ({ children }) => {
 	}
 
 	return (
-		<div className="min-h-screen flex flex-col bg-primary">
+		<div className="min-h-screen flex flex-col bg-gray-200">
 			{/* Header */}
 			<header className="bg-red-700 text-white p-4 flex justify-between items-center shadow">
 				<div className="flex flex-col gap-2">

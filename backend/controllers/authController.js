@@ -81,7 +81,11 @@ export const verifyUserEmail = async (req, res, next) => {
 		});
 
 		if (!user) {
-			throw new CustomError(401, false, "Invalid or expired verification code ");
+			throw new CustomError(
+				401,
+				false,
+				"Invalid or expired verification code "
+			);
 		}
 
 		user.isEmailVerified = true;
@@ -132,7 +136,15 @@ export const signInUser = async (req, res, next) => {
 		res.status(200).json({
 			success: true,
 			message: "Sign in successful",
-			data: { user },
+			data: {
+				user: {
+					...user._doc,
+					_id: undefined,
+					verificationCode: undefined,
+					verificationCodeExpires: undefined,
+
+				},
+			},
 		});
 	} catch (error) {
 		console.error("Error in signInUser:", error);
