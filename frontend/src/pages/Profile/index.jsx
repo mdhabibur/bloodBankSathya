@@ -18,8 +18,16 @@ const Profile = () => {
 	const getTabs = () => {
 		if (userType === "organization") {
 			return [
-				{ key: "inventory", label: "Inventory", children: <Inventory /> },
-				{ key: "donors", label: "Donors", children: <Donors /> },
+				{
+					key: "inventory",
+					label: "Inventory",
+					children: <Inventory />,
+				},
+				{
+					key: "donors",
+					label: "Donors",
+					children: <Donors />,
+				},
 				{
 					key: "hospitals",
 					label: "Hospitals",

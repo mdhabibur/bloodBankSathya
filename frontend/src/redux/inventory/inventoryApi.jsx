@@ -52,3 +52,29 @@ export const fetchInventories = createAsyncThunk(
 		}
 	}
 );
+
+
+export const fetchDonors = createAsyncThunk(
+	"auth/fetchDonors",
+	async (credentials, { rejectWithValue }) => {
+		try {
+			const response = await fetch(credentials.url, {
+				method: credentials.method,
+				credentials: "include",
+			});
+
+			const data = await response.json();
+
+			console.log("data: ", data);
+
+			if (data.success === false) {
+				return rejectWithValue(data?.message || "Failed to fetch Inventory");
+			}
+
+			return data;
+		} catch (error) {
+			console.log("error: ", error);
+			return rejectWithValue("An error occurred during fetching inventory in FE");
+		}
+	}
+);

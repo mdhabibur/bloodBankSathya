@@ -156,7 +156,7 @@ const Inventory = () => {
 				/>
 			)}
 
-			<InventoryTable inventories={inventories} columns={columns} />
+			<InventoryTable records={inventories} columns={columns} />
 		</div>
 	);
 };

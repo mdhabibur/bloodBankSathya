@@ -5,6 +5,7 @@ import cors from "cors";
 import { connectMongoDB } from "./mongoDB/connectMongoDB.js";
 import authRoutes from "./routes/authRoutes.js";
 import inventoryRoutes from "./routes/inventoryRoutes.js"
+import donorsRoutes from "./routes/donorsRoutes.js"
 import errorHandler from "./middlewares/errorHandler.js";
 import cookieParser from "cookie-parser";
 
@@ -27,6 +28,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/inventories", inventoryRoutes);
+app.use("/api/donors", donorsRoutes)
 
 
 //Error Handling middleware
