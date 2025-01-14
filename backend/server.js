@@ -4,7 +4,9 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { connectMongoDB } from "./mongoDB/connectMongoDB.js";
 import authRoutes from "./routes/authRoutes.js";
+import inventoryRoutes from "./routes/inventoryRoutes.js"
 import errorHandler from "./middlewares/errorHandler.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 const app = express();
@@ -12,6 +14,9 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser()); 
+// Required to parse cookies
+
 
 // Routes
 
@@ -21,6 +26,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/inventory", inventoryRoutes);
 
 
 //Error Handling middleware
