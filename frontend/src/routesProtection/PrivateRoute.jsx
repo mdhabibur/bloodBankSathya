@@ -60,11 +60,15 @@ const PrivateRoute = ({ children }) => {
 		navigate("/profile")
 	}
 
+	const navigateToDashboard = () => {
+		navigate("/")
+	}
+
 	return (
 		<div className="min-h-screen flex flex-col bg-gray-200">
 			{/* Header */}
 			<header className="bg-red-700 text-white p-4 flex justify-between items-center shadow">
-				<div className="flex flex-col gap-2">
+				<div className="flex flex-col gap-2 cursor-pointer" onClick={navigateToDashboard}>
 					<h1 className="text-lg font-bold text-teal-400">BLOOD_LIFE</h1>
 					<h3 className="uppercase font-semibold text-xs ">
 						{currentUser.userType}

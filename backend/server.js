@@ -6,6 +6,7 @@ import { connectMongoDB } from "./mongoDB/connectMongoDB.js";
 import authRoutes from "./routes/authRoutes.js";
 import inventoryRoutes from "./routes/inventoryRoutes.js"
 import donorsRoutes from "./routes/donorsRoutes.js"
+import hospitalsRoutes from "./routes/hospitalsRoutes.js"
 import errorHandler from "./middlewares/errorHandler.js";
 import cookieParser from "cookie-parser";
 
@@ -29,6 +30,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/inventories", inventoryRoutes);
 app.use("/api/donors", donorsRoutes)
+app.use("/api/hospitals", hospitalsRoutes)
 
 
 //Error Handling middleware

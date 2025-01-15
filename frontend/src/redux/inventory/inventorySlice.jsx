@@ -1,11 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { addInventory, fetchDonors, fetchInventories } from "./inventoryApi";
+import { addInventory, fetchDonors, fetchHospitals, fetchInventories } from "./inventoryApi";
 
 // Initial state for inventory slice
 const initialState = {
 	inventoryRecord: null,
     inventories: null,
     donors: null,
+	hospitals: null,
 	loading: false,
 	error: null,
 	success: null,
@@ -70,7 +71,25 @@ const inventorySlice = createSlice({
 				state.loading = false;
 				state.success = null;
 				state.error = action.payload;
+			})
+
+
+			.addCase(fetchHospitals.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(fetchHospitals.fulfilled, (state, action) => {
+				state.loading = false;
+				state.error = null;
+				state.hospitals = action.payload.data.hospitals;
+				state.success = action.payload.message;
+			})
+			.addCase(fetchHospitals.rejected, (state, action) => {
+				state.loading = false;
+				state.success = null;
+				state.error = action.payload;
 			});
+
 
 
 
