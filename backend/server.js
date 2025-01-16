@@ -33,6 +33,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/inventories", inventoryRoutes);
 app.use("/api/donors", donorsRoutes)
 app.use("/api/hospitals", hospitalsRoutes)
+app.use("/api/blood-groups", inventoryRoutes)
 
 //for donor user type
 app.use("/api/donors", inventoryRoutes);

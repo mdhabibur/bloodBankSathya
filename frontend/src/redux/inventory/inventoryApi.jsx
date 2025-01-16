@@ -157,3 +157,34 @@ export const fetchConsumptionRecords = createAsyncThunk(
 		}
 	}
 );
+
+
+export const fetchBloodGroupData = createAsyncThunk(
+  "organization/fetchBloodGroupData",
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const bloodGroups = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
+
+      const promises = bloodGroups.map((group) =>
+        fetch(credentials.url, {
+          method: credentials.method,
+          headers: credentials.headers,
+          body: JSON.stringify({ bloodGroup: group }),
+		  credentials: "include",
+        })
+      );
+
+      const responses = await Promise.all(promises);
+      const data = await Promise.all(responses.map((response) => response.json()));
+
+      if (data.some((item) => item.success === false)) {
+        return rejectWithValue("Failed to fetch data for some blood groups.");
+      }
+
+      return data.map((item) => item.data.bloodGroupsData); // Extract the relevant data for each group
+    } catch (error) {
+      console.error("Error fetching blood group data:", error);
+      return rejectWithValue("An error occurred while fetching blood group data.");
+    }
+  }
+);

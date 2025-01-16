@@ -70,7 +70,7 @@ const Inventory = () => {
 					.then(() => {
 						console.log("Inventory added successfully");
 						fetchInventoriesFunction();
-						setIsModalOpen(false);
+						// setIsModalOpen(false);
 						// form.resetFields();
 					})
 					.catch((error) => {

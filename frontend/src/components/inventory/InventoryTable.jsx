@@ -14,7 +14,7 @@ const InventoryTable = ({ records, columns }) => {
         key: item._id || index
     }))
 
-	return <Table columns={columns} dataSource={recordsWithKeys} />;
+	return <Table columns={columns} dataSource={recordsWithKeys}  className="cursor-pointer"/>;
 };
 
 export default InventoryTable;
