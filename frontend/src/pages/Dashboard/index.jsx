@@ -5,6 +5,7 @@ import { resetAuthState } from "../../redux/auth/authSlice";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import OrganizationDashboardPage from "./Organization/OrganizationDashboardPage";
+import DonorHospitalDashboard from "./Donor_Hospital/DonorHospitalDashboard";
 
 const Dashboard = () => {
 	const { loading, error, success, currentUser } = useSelector(
@@ -16,7 +17,7 @@ const Dashboard = () => {
 			{currentUser.userType === "organization" ? (
 				<OrganizationDashboardPage />
 			) : (
-				<h1>donor or hospital dashboard page</h1>
+				<DonorHospitalDashboard />
 			)}
 		</div>
 	);

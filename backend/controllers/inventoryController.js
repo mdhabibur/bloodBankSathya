@@ -160,7 +160,7 @@ export const addInventory = async (req, res, next) => {
 
 export const getInventories = async (req, res, next) => {
 
-	const limit = parseInt(req.query.limit) || 5
+	const limit = parseInt(req.query.limit)
 
 	try {
 		const inventories = await Inventory.find({
@@ -185,8 +185,14 @@ export const getInventories = async (req, res, next) => {
 };
 
 export const getDonations = async (req, res, next) => {
+
+	const limit = parseInt(req.query.limit)
+
 	try {
-		const donations = await Inventory.find({ donor: req.user.userId }).populate(
+		const donations = await Inventory.find({ donor: req.user.userId })
+		.sort({createdAt: -1})
+		.limit(limit)
+		.populate(
 			"donor hospital organization"
 		);
 		// Fetch all donations of logged in organization
@@ -205,10 +211,16 @@ export const getDonations = async (req, res, next) => {
 };
 
 export const getConsumptions = async (req, res, next) => {
+
+	const limit = parseInt(req.query.limit)
+
 	try {
 		const consumptions = await Inventory.find({
 			hospital: req.user.userId,
-		}).populate("donor hospital organization");
+		})
+		.sort({createdAt: -1})
+		.limit(limit)
+		.populate("donor hospital organization");
 		// Fetch all consumptions of logged in organization
 		res.status(200).json({
 			success: true,
