@@ -125,3 +125,40 @@ export const getInventories = async (req, res, next) => {
 			.json({ success: false, message: "Failed to fetch inventories" });
 	}
 };
+
+
+export const getDonations = async (req, res, next) => {
+	try {
+		const donations = await Inventory.find({ donor: req.user.userId }).populate("donor hospital organization");
+		// Fetch all donations of logged in organization
+		res.status(200).json({
+			success: true,
+			message: "Inventory fetched successfully.",
+			data: {
+				donations,
+			},
+		});
+	} catch (error) {
+		res
+			.status(500)
+			.json({ success: false, message: "Failed to fetch donations" });
+	}
+};
+
+export const getConsumptions = async (req, res, next) => {
+	try {
+		const consumptions = await Inventory.find({ hospital: req.user.userId }).populate("donor hospital organization");
+		// Fetch all consumptions of logged in organization
+		res.status(200).json({
+			success: true,
+			message: "Consumptions Inventory fetched successfully.",
+			data: {
+				consumptions,
+			},
+		});
+	} catch (error) {
+		res
+			.status(500)
+			.json({ success: false, message: "Failed to fetch consumptions" });
+	}
+};

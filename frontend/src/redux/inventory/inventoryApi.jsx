@@ -104,3 +104,56 @@ export const fetchHospitals = createAsyncThunk(
 		}
 	}
 );
+
+
+
+export const fetchDonationRecords = createAsyncThunk(
+	"auth/fetchDonationRecords",
+	async (credentials, { rejectWithValue }) => {
+		try {
+			const response = await fetch(credentials.url, {
+				method: credentials.method,
+				credentials: "include",
+			});
+
+			const data = await response.json();
+
+			console.log("data: ", data);
+
+			if (data.success === false) {
+				return rejectWithValue(data?.message || "Failed to fetch donations records");
+			}
+
+			return data;
+		} catch (error) {
+			console.log("error: ", error);
+			return rejectWithValue("An error occurred during fetching donations records in FE");
+		}
+	}
+);
+
+
+export const fetchConsumptionRecords = createAsyncThunk(
+	"auth/fetchConsumptionRecords",
+	async (credentials, { rejectWithValue }) => {
+		try {
+			const response = await fetch(credentials.url, {
+				method: credentials.method,
+				credentials: "include",
+			});
+
+			const data = await response.json();
+
+			console.log("data: ", data);
+
+			if (data.success === false) {
+				return rejectWithValue(data?.message || "Failed to fetch consumption records");
+			}
+
+			return data;
+		} catch (error) {
+			console.log("error: ", error);
+			return rejectWithValue("An error occurred during fetching consumption records in FE");
+		}
+	}
+);

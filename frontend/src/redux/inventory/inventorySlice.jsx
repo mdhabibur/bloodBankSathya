@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { addInventory, fetchDonors, fetchHospitals, fetchInventories } from "./inventoryApi";
+import { addInventory, fetchConsumptionRecords, fetchDonationRecords, fetchDonors, fetchHospitals, fetchInventories } from "./inventoryApi";
 
 // Initial state for inventory slice
 const initialState = {
@@ -7,6 +7,8 @@ const initialState = {
     inventories: null,
     donors: null,
 	hospitals: null,
+	donationRecords: null,
+	consumptionRecords: null,
 	loading: false,
 	error: null,
 	success: null,
@@ -88,7 +90,47 @@ const inventorySlice = createSlice({
 				state.loading = false;
 				state.success = null;
 				state.error = action.payload;
+			})
+
+
+
+
+			.addCase(fetchDonationRecords.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(fetchDonationRecords.fulfilled, (state, action) => {
+				state.loading = false;
+				state.error = null;
+				state.donationRecords = action.payload.data.donations;
+				state.success = action.payload.message;
+			})
+			.addCase(fetchDonationRecords.rejected, (state, action) => {
+				state.loading = false;
+				state.success = null;
+				state.error = action.payload;
+			})
+
+
+
+			.addCase(fetchConsumptionRecords.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(fetchConsumptionRecords.fulfilled, (state, action) => {
+				state.loading = false;
+				state.error = null;
+				state.consumptionRecords = action.payload.data.consumptions;
+				state.success = action.payload.message;
+			})
+			.addCase(fetchConsumptionRecords.rejected, (state, action) => {
+				state.loading = false;
+				state.success = null;
+				state.error = action.payload;
 			});
+
+
+
 
 
 

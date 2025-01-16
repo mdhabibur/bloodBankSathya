@@ -28,9 +28,19 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+
+//for organizations user type
 app.use("/api/inventories", inventoryRoutes);
 app.use("/api/donors", donorsRoutes)
 app.use("/api/hospitals", hospitalsRoutes)
+
+//for donor user type
+app.use("/api/donors", inventoryRoutes);
+
+
+//for hospital user type
+app.use("/api/hospitals", inventoryRoutes);
+
 
 
 //Error Handling middleware
