@@ -25,9 +25,12 @@ app.use(cookieParser());
 // Backend Routes
 
 //test routes
-app.get("/", (req, res) => {
-	res.status(200).json({ message: "Welcome to Blood Bank API" });
-});
+
+// app.get("/", (req, res) => {
+// 	res.status(200).json({ message: "Welcome to Blood Bank API" });
+// });
+
+
 app.use("/api/auth", authRoutes);
 
 //for organizations user type
