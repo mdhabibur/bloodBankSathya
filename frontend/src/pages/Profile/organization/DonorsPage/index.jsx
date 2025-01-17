@@ -4,6 +4,8 @@ import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { fetchDonors } from "../../../../redux/inventory/inventoryApi";
+import { resetInventoryState } from "../../../../redux/inventory/inventorySlice";
+import toast from "react-hot-toast";
 
 const Donors = () => {
 	const { loading, error, success, inventoryRecord, inventories, donors } =
@@ -33,6 +35,25 @@ const Donors = () => {
 	{
 		console.log("donors: ", donors);
 	}
+
+	useEffect(() => {
+		//timer object
+		let timer;
+		if (error || success) {
+			if (success) {
+				dispatch(resetInventoryState());
+				// toast.success(success);
+				return;
+			}
+
+			timer = setTimeout(() => {
+				dispatch(resetInventoryState());
+			}, 3000);
+		}
+
+		//cleanup timer on unmount
+		return () => clearTimeout(timer);
+	}, [error, success, dispatch, navigate]);
 
 	//columns for inventory table
 
@@ -88,7 +109,12 @@ const Donors = () => {
 		},
 	];
 
-	return <InventoryTable records={donors} columns={columns} />;
+	return (
+		<div>
+			{error && toast.error(error)}
+			<InventoryTable records={donors} columns={columns} />{" "}
+		</div>
+	);
 };
 
 export default Donors;

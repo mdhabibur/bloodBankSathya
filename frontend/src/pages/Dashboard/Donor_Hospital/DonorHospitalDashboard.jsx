@@ -66,7 +66,7 @@ const DonorHospitalDashboard = () => {
 		if (error || success) {
 			if (success) {
 				dispatch(resetInventoryState());
-				toast.success(success);
+				// toast.success(success);
 				return;
 			}
 
@@ -105,7 +105,8 @@ const DonorHospitalDashboard = () => {
 	];
 
 	return (
-		<div>
+		<div className="p-4">
+			{error && toast.err(error)}
 			{currentUser.userType === "donor" ? (
 				<InventoryTable records={donationRecords} columns={columns} />
 			) : (

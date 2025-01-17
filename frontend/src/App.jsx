@@ -14,6 +14,7 @@ import Profile from "./pages/Profile/index.jsx";
 import { antdCustomTheme } from "./theme/theme.js";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword.jsx";
 import ResetPassword from "./pages/ResetPassword/ResetPassword.jsx";
+import NotFoundPage from "./pages/NotFoundPage/NotFoundPage.jsx";
 
 function App() {
 	return (
@@ -80,6 +81,8 @@ function App() {
 								</PrivateRoute>
 							}
 						/>
+
+						<Route path="*" element={<NotFoundPage />} />
 					</Routes>
 				</Router>
 

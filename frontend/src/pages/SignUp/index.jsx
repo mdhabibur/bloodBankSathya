@@ -12,8 +12,6 @@ import { resetAuthState } from "../../redux/auth/authSlice";
 import toast from "react-hot-toast";
 import { Loader } from "lucide-react";
 
-
-
 const SignUp = () => {
 	const [userType, setUserType] = useState("donor");
 	const dispatch = useDispatch();
@@ -46,7 +44,6 @@ const SignUp = () => {
 		//timer object
 		let timer;
 		if (error || success) {
-
 			if (success) {
 				dispatch(resetAuthState());
 				navigate("/verify-email");
@@ -57,7 +54,6 @@ const SignUp = () => {
 			timer = setTimeout(() => {
 				dispatch(resetAuthState());
 			}, 3000);
-
 		}
 
 		//cleanup timer on unmount
@@ -69,9 +65,7 @@ const SignUp = () => {
 			<div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md my-4">
 				<h1 className="text-2xl font-bold text-center mb-4">Sign Up</h1>
 
-
-        {error && toast.error(error)}
-
+				{error && toast.error(error)}
 
 				<Form
 					layout="vertical"
@@ -162,13 +156,13 @@ const SignUp = () => {
 							type="primary"
 							htmlType="submit"
 							className="w-full uppercase"
-              disabled={loading}
+							disabled={loading}
 						>
-							{
-                loading ? (
-                  <Loader className="animate-spin mx-auto" size={24}/>
-                ) : "Sign Up"
-              }
+							{loading ? (
+								<Loader className="animate-spin mx-auto" size={24} />
+							) : (
+								"Sign Up"
+							)}
 						</Button>
 					</Form.Item>
 				</Form>

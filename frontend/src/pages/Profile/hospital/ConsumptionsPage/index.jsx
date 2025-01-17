@@ -46,7 +46,7 @@ const Consumptions = () => {
 		if (error || success) {
 			if (success) {
 				dispatch(resetInventoryState());
-				toast.success(success);
+				// toast.success(success);
 				return;
 			}
 
@@ -85,7 +85,8 @@ const Consumptions = () => {
 	];
 
 	return (
-		<div>
+		<div> 
+			{error && toast.error(error)}
 			<InventoryTable records={consumptionRecords} columns={columns} />
 		</div>
 	);

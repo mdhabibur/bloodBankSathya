@@ -88,7 +88,7 @@ const Inventory = () => {
 		if (error || success) {
 			if (success) {
 				dispatch(resetInventoryState());
-				toast.success(success);
+				// toast.success(success);
 				return;
 			}
 

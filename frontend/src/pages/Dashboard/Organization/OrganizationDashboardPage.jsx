@@ -1,13 +1,24 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { fetchBloodGroupData, fetchInventories } from "../../../redux/inventory/inventoryApi";
+import {
+	fetchBloodGroupData,
+	fetchInventories,
+} from "../../../redux/inventory/inventoryApi";
 import InventoryTable from "../../../components/inventory/InventoryTable";
 import moment from "moment";
+import { resetInventoryState } from "../../../redux/inventory/inventorySlice";
+import { useNavigate } from "react-router-dom";
+import { Loader } from "lucide-react";
 
 const OrganizationDashboardPage = () => {
-	const dispatch = useDispatch();
-	const { bloodData, loading, error, inventories } = useSelector((state) => state.inventory);
+
+	const { bloodData, loading, error, success, inventories } = useSelector(
+		(state) => state.inventory
+	);
+
+	const navigate = useNavigate()
+	const dispatch = useDispatch()
 
 	const fetchInventoriesFunction = (limit = 5) => {
 		try {
@@ -45,14 +56,31 @@ const OrganizationDashboardPage = () => {
 
 	console.log("blood group data: ", bloodData);
 
+	useEffect(() => {
+		//timer object
+		let timer;
+		if (error || success) {
+			if (success) {
+				dispatch(resetInventoryState());
+				// toast.success(success);
+				return;
+			}
 
-        //columns for inventory table
-    
-    
-        //format date using moment package
-        const formatDate = (date) => moment(date).format("DD-MM-YYYY, hh:mm A");
+			timer = setTimeout(() => {
+				dispatch(resetInventoryState());
+			}, 3000);
+		}
 
-    const columns = [
+		//cleanup timer on unmount
+		return () => clearTimeout(timer);
+	}, [error, success, dispatch, navigate]);
+
+	//columns for inventory table
+
+	//format date using moment package
+	const formatDate = (date) => moment(date).format("DD-MM-YYYY, hh:mm A");
+
+	const columns = [
 		{ title: "Inventory Type", dataIndex: "inventoryType", key: "type" },
 		{ title: "Blood Group", dataIndex: "bloodGroup", key: "bloodGroup" },
 		{ title: "Quantity", dataIndex: "quantity", key: "quantity" },
@@ -72,10 +100,9 @@ const OrganizationDashboardPage = () => {
 		},
 	];
 
-
 	return (
 		<div className="p-4">
-			{loading && <p>Loading blood group data...</p>}
+			{loading && <Loader className="animate-spin mx-auto" size={60} />}
 			{error && toast.err(error)}
 
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -109,8 +136,7 @@ const OrganizationDashboardPage = () => {
 				Your Recent Inventory
 			</h1>
 
-            <InventoryTable records={inventories} columns={columns} />
-
+			<InventoryTable records={inventories} columns={columns} />
 		</div>
 	);
 };

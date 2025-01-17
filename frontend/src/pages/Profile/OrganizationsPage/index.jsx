@@ -68,7 +68,7 @@ const Organizations = () => {
 		if (error || success) {
 			if (success) {
 				dispatch(resetInventoryState());
-				toast.success(success);
+				// toast.success(success);
 				return;
 			}
 
@@ -122,6 +122,8 @@ const Organizations = () => {
 
 	return (
 		<div>
+			{error && toast.error(error)}
+
 			{currentUser.userType === "donor" ? (
 				<InventoryTable records={donationRecords} columns={columns} />
 			) : (

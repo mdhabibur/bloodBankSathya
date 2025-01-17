@@ -38,7 +38,7 @@ const PrivateRoute = ({ children }) => {
 			if (success) {
 				dispatch(resetAuthState());
 				navigate("/signin");
-				toast.success(success);
+				// toast.success(success);
 				return;
 			}
 

@@ -43,7 +43,7 @@ const Donations = () => {
 		if (error || success) {
 			if (success) {
 				dispatch(resetInventoryState());
-				toast.success(success);
+				// toast.success(success);
 				return;
 			}
 
@@ -85,6 +85,7 @@ const Donations = () => {
 
 	return (
 		<div>
+			{error && toast.error(error)}
 			<InventoryTable records={donationRecords} columns={columns} />
 		</div>
 	);

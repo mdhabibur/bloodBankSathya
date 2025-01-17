@@ -48,7 +48,7 @@ const SignIn = () => {
 			if (success) {
 				dispatch(resetAuthState());
 				navigate("/");
-				toast.success(success);
+				// toast.success(success);
 				return;
 			}
 
