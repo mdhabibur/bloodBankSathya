@@ -9,6 +9,8 @@ import donorsRoutes from "./routes/donorsRoutes.js"
 import hospitalsRoutes from "./routes/hospitalsRoutes.js"
 import errorHandler from "./middlewares/errorHandler.js";
 import cookieParser from "cookie-parser";
+import path from "path";
+
 
 dotenv.config();
 const app = express();
@@ -20,15 +22,13 @@ app.use(cookieParser());
 // Required to parse cookies
 
 
-// Routes
+// Backend Routes
 
 //test routes
 app.get("/", (req, res) => {
 	res.status(200).json({ message: "Welcome to Blood Bank API" });
 });
-
 app.use("/api/auth", authRoutes);
-
 
 //for organizations user type
 app.use("/api/inventories", inventoryRoutes);
@@ -39,9 +39,25 @@ app.use("/api/blood-groups", inventoryRoutes)
 //for donor user type
 app.use("/api/donors", inventoryRoutes);
 
-
 //for hospital user type
 app.use("/api/hospitals", inventoryRoutes);
+
+
+
+//frontend routes (for production) as in production both backend and frontend domain will be run under a single domain and single server
+
+if (process.env.NODE_ENV === "production") {
+	const __dirname = path.resolve();
+	//get current directory location
+
+	app.use(express.static(path.join(__dirname, "/frontend/dist")));
+	//serving static production build 'dist' folder for frontend
+
+	//for any route other than /api route, serve the static files from frontend
+	app.get("*", (req, res) => {
+		res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+	});
+}
 
 
 
