@@ -57,6 +57,65 @@ export const verifyEmail = createAsyncThunk(
 	}
 );
 
+export const forgotPassword = createAsyncThunk(
+	"auth/forgotPassword",
+	async (credentials, { rejectWithValue }) => {
+		try {
+			const response = await fetch(credentials.url, {
+				method: credentials.method,
+				headers: credentials.headers,
+				body: JSON.stringify(credentials.formData),
+				credentials: "include",
+			});
+
+			const data = await response.json();
+
+			console.log("data: ", data);
+
+			if (data.success === false) {
+				return rejectWithValue(data?.message || "Email verification failed");
+			}
+
+			return data;
+		} catch (error) {
+			console.log("error: ", error);
+			return rejectWithValue(
+				"An error occurred during email verification in FE"
+			);
+		}
+	}
+);
+
+export const resetPassword = createAsyncThunk(
+	"auth/resetPassword",
+	async (credentials, { rejectWithValue }) => {
+		try {
+			const response = await fetch(credentials.url, {
+				method: credentials.method,
+				headers: credentials.headers,
+				body: JSON.stringify(credentials.formData),
+				credentials: "include",
+			});
+
+			const data = await response.json();
+
+			console.log("data: ", data);
+
+			if (data.success === false) {
+				return rejectWithValue(data?.message || "Email verification failed");
+			}
+
+			return data;
+		} catch (error) {
+			console.log("error: ", error);
+			return rejectWithValue(
+				"An error occurred during email verification in FE"
+			);
+		}
+	}
+);
+
+
 export const signInUser = createAsyncThunk(
 	"auth/signInUser",
 	async (credentials, { rejectWithValue }) => {

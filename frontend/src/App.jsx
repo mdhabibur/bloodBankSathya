@@ -11,13 +11,13 @@ import PublicRoute from "./routesProtection/PublicRoute";
 import EmailVerifiedRoute from "./routesProtection/EmailVerifiedRoute";
 import { ConfigProvider } from "antd";
 import Profile from "./pages/Profile/index.jsx";
-import {antdCustomTheme} from "./theme/theme.js";
+import { antdCustomTheme } from "./theme/theme.js";
+import ForgotPassword from "./pages/ForgotPassword/ForgotPassword.jsx";
+import ResetPassword from "./pages/ResetPassword/ResetPassword.jsx";
 
 function App() {
 	return (
-		<ConfigProvider
-			theme={antdCustomTheme}
-		>
+		<ConfigProvider theme={antdCustomTheme}>
 			<div className="bg-primary">
 				<Router>
 					<Routes>
@@ -50,6 +50,24 @@ function App() {
 							element={
 								<PublicRoute>
 									<VerifyEmail />
+								</PublicRoute>
+							}
+						/>
+
+						<Route
+							path="/forgot-password"
+							element={
+								<PublicRoute>
+									<ForgotPassword />
+								</PublicRoute>
+							}
+						/>
+
+						<Route
+							path="/reset-password/:token"
+							element={
+								<PublicRoute>
+									<ResetPassword />
 								</PublicRoute>
 							}
 						/>

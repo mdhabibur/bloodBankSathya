@@ -11,6 +11,8 @@
 /frontend/.vite
 
 # Common
+using_chatgpt.txt
+
 .DS_Store
 Thumbs.db
 

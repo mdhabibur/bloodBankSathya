@@ -29,6 +29,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 
+
 //for organizations user type
 app.use("/api/inventories", inventoryRoutes);
 app.use("/api/donors", donorsRoutes)
