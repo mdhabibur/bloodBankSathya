@@ -1,4 +1,5 @@
 import Inventory from "../models/Inventory.js";
+import CustomError from "../utils/CustomError.js";
 
 export const getHospitals = async (req, res, next) => {
 	try {
@@ -6,6 +7,10 @@ export const getHospitals = async (req, res, next) => {
 			organization: req.user.userId,
 			inventoryType: "Out",
 		}).populate("donor hospital organization");
+
+		if (!hospitals) {
+			throw new CustomError(400, false, "No hospitals found");
+		}
 
 		// Fetch all hospitals in organization
 		res.status(200).json({
@@ -16,8 +21,6 @@ export const getHospitals = async (req, res, next) => {
 			},
 		});
 	} catch (error) {
-		res
-			.status(500)
-			.json({ success: false, message: "Failed to fetch hospitals" });
+		next(error);
 	}
 };

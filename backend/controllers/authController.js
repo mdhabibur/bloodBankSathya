@@ -181,9 +181,7 @@ export const forgotPassword = async (req, res, next) => {
 		// Check if user exists
 		const user = await User.findOne({ email });
 		if (!user) {
-			return res
-				.status(404)
-				.json({ success: false, message: "User not found" });
+			throw new CustomError(404, false, "User not found");
 		}
 
 		// Generate a reset token
@@ -209,55 +207,51 @@ export const forgotPassword = async (req, res, next) => {
 		});
 	} catch (error) {
 		console.error("Error:", error);
-		res.status(500).json({ success: false, message: "Server error" });
+		next(error);
 	}
 };
 
-
-export const resetPassword = async (req, res) => {
+export const resetPassword = async (req, res, next) => {
 	const { token } = req.params;
 	const { password } = req.body;
-  
+
 	try {
-	  // Hash the provided token to match the one in the database
-	  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
-  
-	  // Find the user by the hashed token and ensure the token is still valid
-	  const user = await User.findOne({
-		resetPasswordToken: hashedToken,
-		resetPasswordExpires: { $gt: Date.now() },
-		// Check token expiration
-	  });
-  
-	  if (!user) {
-		return res.status(400).json({
-		  success: false,
-		  message: "Invalid or expired password reset token",
+		// Hash the provided token to match the one in the database
+		const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+		// Find the user by the hashed token and ensure the token is still valid
+		const user = await User.findOne({
+			resetPasswordToken: hashedToken,
+			resetPasswordExpires: { $gt: Date.now() },
+			// Check token expiration
 		});
-	  }
-  
-  
-	  // Hash the new password
-	  const salt = await bcrypt.genSalt(10);
-	  const hashedPassword = await bcrypt.hash(password, salt);
-  
-	  // Update user's password and clear reset token fields
-	  user.password = hashedPassword;
-	  user.resetPasswordToken = undefined;
-	  user.resetPasswordExpires = undefined;
-	  await user.save();
 
-	  await sendResetPasswordSuccessfulEmail(user.email);
+		if (!user) {
+			throw new CustomError(
+				400,
+				false,
+				"Invalid or expired password reset token"
+			);
+		}
 
-	  res.status(200).json({
-		success: true,
-		message: "Password reset successful.Redirecting...",
-	  });
+		// Hash the new password
+		const salt = await bcrypt.genSalt(10);
+		const hashedPassword = await bcrypt.hash(password, salt);
+
+		// Update user's password and clear reset token fields
+		user.password = hashedPassword;
+		user.resetPasswordToken = undefined;
+		user.resetPasswordExpires = undefined;
+		await user.save();
+
+		await sendResetPasswordSuccessfulEmail(user.email);
+
+		res.status(200).json({
+			success: true,
+			message: "Password reset successful.Redirecting...",
+		});
 	} catch (error) {
-	  console.error("Error resetting password:", error);
-	  res.status(500).json({
-		success: false,
-		message: "Failed to reset password. Please try again.",
-	  });
+		console.error("Error resetting password:", error);
+		next(error);
 	}
-  }; 
+};

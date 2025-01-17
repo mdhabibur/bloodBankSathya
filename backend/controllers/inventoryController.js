@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Inventory from "../models/Inventory.js";
 import User from "../models/User.js";
+import CustomError from "../utils/CustomError.js";
 
 export const addInventory = async (req, res, next) => {
 	const { inventoryType, bloodGroup, quantity } = req.body;
@@ -20,9 +21,7 @@ export const addInventory = async (req, res, next) => {
 	try {
 		// Validate fields
 		if (!inventoryType || !bloodGroup || !quantity || !organization) {
-			return res
-				.status(400)
-				.json({ success: false, message: "All fields are required." });
+			throw new CustomError(400, false, "All fields are required.");
 		}
 
 		// console.log("donor: ", donor)
@@ -30,32 +29,24 @@ export const addInventory = async (req, res, next) => {
 		// console.log("inventory type: ", inventoryType)
 
 		if (inventoryType === "In" && !donor) {
-			return res
-				.status(400)
-				.json({ success: false, message: "donor email is required." });
+			throw new CustomError(400, false, "donor email is required.");
 		}
 
 		if (inventoryType === "Out" && !hospital) {
-			return res
-				.status(400)
-				.json({ success: false, message: "hospital email is required." });
+			throw new CustomError(400, false, "hospital email is required.");
 		}
 
 		// Check if quantity is a positive number
 		if (quantity <= 0) {
-			return res.status(400).json({
-				success: false,
-				message: "Quantity must be a positive value.",
-			});
+			throw new CustomError(400, false, "Quantity must be a positive value.");
 		}
 
 		//when consuming blood , total_out value must be less than total_in value of blood
 
-		if(inventoryType === "Out"){
-
+		if (inventoryType === "Out") {
 			const organizationId = new mongoose.Types.ObjectId(req.user.userId);
 			console.log("organization: ", organizationId);
-	
+
 			const results = await Inventory.aggregate([
 				{
 					$match: {
@@ -63,23 +54,23 @@ export const addInventory = async (req, res, next) => {
 						organization: organizationId,
 					},
 				},
-	
+
 				{
 					$group: {
 						_id: "$inventoryType",
 						total: { $sum: "$quantity" },
 					},
 				},
-	
+
 				{
 					$addFields: {
 						bloodGroup: bloodGroup,
 					},
 				},
 			]);
-	
+
 			console.log("aggregation results: ", results);
-	
+
 			const data = {
 				totalIn: results.find((r) => r._id === "In")?.total || 0,
 				totalOut: results.find((r) => r._id === "Out")?.total || 0,
@@ -87,41 +78,41 @@ export const addInventory = async (req, res, next) => {
 					(results.find((r) => r._id === "In")?.total || 0) -
 					(results.find((r) => r._id === "Out")?.total || 0),
 			};
-	
+
 			if (quantity > data.totalAvailable) {
-				return res.status(400).json({
-					success: false,
-					message: `only ${data.totalAvailable} ML of ${bloodGroup} is available`,
-				});
+				throw new CustomError(
+					400,
+					false,
+					`only ${data.totalAvailable} ML of ${bloodGroup} is available`
+				);
 			}
-
 		}
-
 
 		// Check inventoryType validity
 		if (!["In", "Out"].includes(inventoryType)) {
-			return res
-				.status(400)
-				.json({ success: false, message: "Invalid inventory type." });
+			throw new CustomError(400, false, "Invalid inventory type.");
 		}
 
 		// Find user for hospital, donor, or organization reference
 		let donorOrHospitalUser;
+
 		if (inventoryType === "In") {
 			donorOrHospitalUser = await User.findOne({ email: donor });
 			if (!donorOrHospitalUser) {
-				return res.status(404).json({
-					success: false,
-					message: "donor with the given email not found.",
-				});
+				throw new CustomError(
+					404,
+					false,
+					"donor with the given email not found."
+				);
 			}
 		} else if (inventoryType === "Out") {
 			donorOrHospitalUser = await User.findOne({ email: hospital });
 			if (!donorOrHospitalUser) {
-				return res.status(404).json({
-					success: false,
-					message: "hospital with the given email not found.",
-				});
+				throw new CustomError(
+					404,
+					false,
+					"hospital with the given email not found."
+				);
 			}
 		}
 
@@ -154,22 +145,26 @@ export const addInventory = async (req, res, next) => {
 		});
 	} catch (error) {
 		console.error("Error adding inventory:", error);
-		res.status(500).json({ success: false, message: "Internal server error." });
+		next(error);
 	}
 };
 
 export const getInventories = async (req, res, next) => {
-
-	const limit = parseInt(req.query.limit)
+	const limit = parseInt(req.query.limit);
 
 	try {
 		const inventories = await Inventory.find({
 			organization: req.user.userId,
 		})
-		.sort({createdAt: -1}) // Sort by creation date in descending order (latest first)
-		.limit(limit) // Limit the number of results
-		.populate("donor hospital organization");
+			.sort({ createdAt: -1 }) // Sort by creation date in descending order (latest first)
+			.limit(limit) // Limit the number of results
+			.populate("donor hospital organization");
 		// Fetch all inventories of logged in organization
+
+		if (!inventories) {
+			throw new CustomError(400, false, "Inventories not found.");
+		}
+
 		res.status(200).json({
 			success: true,
 			message: "Inventory fetched successfully.",
@@ -178,24 +173,24 @@ export const getInventories = async (req, res, next) => {
 			},
 		});
 	} catch (error) {
-		res
-			.status(500)
-			.json({ success: false, message: "Failed to fetch inventories" });
+		next(error);
 	}
 };
 
 export const getDonations = async (req, res, next) => {
-
-	const limit = parseInt(req.query.limit)
+	const limit = parseInt(req.query.limit);
 
 	try {
 		const donations = await Inventory.find({ donor: req.user.userId })
-		.sort({createdAt: -1})
-		.limit(limit)
-		.populate(
-			"donor hospital organization"
-		);
+			.sort({ createdAt: -1 })
+			.limit(limit)
+			.populate("donor hospital organization");
 		// Fetch all donations of logged in organization
+
+		if (!donations) {
+			throw new CustomError(400, false, "No Donation records found");
+		}
+
 		res.status(200).json({
 			success: true,
 			message: "Inventory fetched successfully.",
@@ -204,24 +199,27 @@ export const getDonations = async (req, res, next) => {
 			},
 		});
 	} catch (error) {
-		res
-			.status(500)
-			.json({ success: false, message: "Failed to fetch donations" });
+		console.log("error: ", error);
+		next(error);
 	}
 };
 
 export const getConsumptions = async (req, res, next) => {
-
-	const limit = parseInt(req.query.limit)
+	const limit = parseInt(req.query.limit);
 
 	try {
 		const consumptions = await Inventory.find({
 			hospital: req.user.userId,
 		})
-		.sort({createdAt: -1})
-		.limit(limit)
-		.populate("donor hospital organization");
+			.sort({ createdAt: -1 })
+			.limit(limit)
+			.populate("donor hospital organization");
 		// Fetch all consumptions of logged in organization
+
+		if (!consumptions) {
+			throw new CustomError(400, false, "No Consumption records found");
+		}
+
 		res.status(200).json({
 			success: true,
 			message: "Consumptions Inventory fetched successfully.",
@@ -230,9 +228,8 @@ export const getConsumptions = async (req, res, next) => {
 			},
 		});
 	} catch (error) {
-		res
-			.status(500)
-			.json({ success: false, message: "Failed to fetch consumptions" });
+		console.log("error: ", error);
+		next(error);
 	}
 };
 
@@ -241,9 +238,7 @@ export const getBloodGroupsData = async (req, res, next) => {
 
 	// Validate and convert organization ID to ObjectId
 	if (!mongoose.Types.ObjectId.isValid(req.user.userId)) {
-		return res
-			.status(400)
-			.json({ success: false, message: "Invalid organization ID" });
+		throw new CustomError(400, false, "Invalid organization ID");
 	}
 
 	const organization = new mongoose.Types.ObjectId(req.user.userId);
@@ -294,8 +289,7 @@ export const getBloodGroupsData = async (req, res, next) => {
 			},
 		});
 	} catch (error) {
-		res
-			.status(500)
-			.json({ success: false, message: "Failed to fetch blood groups data" });
+		console.log("error: ", error);
+		next(error);
 	}
 };
